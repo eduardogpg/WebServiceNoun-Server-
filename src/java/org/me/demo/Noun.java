@@ -14,50 +14,30 @@ import java.util.Date;
  */
 public class Noun {
     
-    private String idNoun;
-    private String currentlyDate;
-    private String deadLine;
+    private String Noun= "";
+    private int countCurrently = 0;
+    private int deadLine = 0;
     
-    public Noun(String idNoun,String currentlyDate, String deadLine){
-        this.idNoun = idNoun;
-        this.currentlyDate = currentlyDate;
+    
+    public Noun(int deadLine, String Noun){
+        
         this.deadLine = deadLine;
-        
-    }
- 
-    public String getIdNoun(){
-        return idNoun;
+        this.Noun = Noun;
     }
     
-    public String getCurrentlyDate(){
-        return this.currentlyDate;
-    }
-    
-    public String deadLine(){
-        return this.deadLine;
-    }
-    
-    public boolean stillTime(){
-        java.util.Date today = new Date();
-        String deadLinex = today.toString();
-        String[] closters = deadLinex.split(" ");
-        String[] HMS = closters[3].split(":");
-        
-        int second = Integer.parseInt(  HMS[2] );
-        int minute = Integer.parseInt(  HMS[1] );
-        int hour = Integer.parseInt(  HMS[0] );
-        
-         
-        String[] closterstwo = this.deadLine.split(" ");
-        String[] HMStwo = closters[3].split(":");
-        
-        int secondtwo = Integer.parseInt(  HMStwo[2] );
-        int minutetwo = Integer.parseInt(  HMStwo[1] );
-        int hourtwo = Integer.parseInt(  HMStwo[0] );
-        
-        if( ( minute<= minutetwo) && ( hour<= hourtwo) )
+    public boolean isCurrent(){
+        if(this.countCurrently <= this.deadLine)
             return true;
         else
             return false;
+        
+    }
+   
+    public void oneSecondMore(){
+        this.countCurrently++;
+    }
+    
+    public String getNouns(){
+        return this.Noun;
     }
 }

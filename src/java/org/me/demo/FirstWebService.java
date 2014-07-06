@@ -34,7 +34,7 @@ public class FirstWebService {
         
     }
     
-    public String getNouns(String name, String password){
+    public String getNouns(String name, String password, int time){
         try {
             
             DataBaseConnection myConnection = new  DataBaseConnection();
@@ -50,12 +50,12 @@ public class FirstWebService {
 
                     String noundGenerated = makeNouns();
 
-                    if( mySingletonNous.setNouns(name, noundGenerated ) == false){ //El nouns ya se repitio
+                    if( mySingletonNous.setNouns(name, noundGenerated , time) == false){ //El nouns ya se repitio
                         boolean myFlag = false;
 
                         while (myFlag == false){
                             noundGenerated = makeNouns();
-                            if( mySingletonNous.setNouns(name, noundGenerated ))
+                            if( mySingletonNous.setNouns(name, noundGenerated, time ))
                                 myFlag = true;
                         }
 

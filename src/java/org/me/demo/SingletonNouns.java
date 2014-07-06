@@ -5,6 +5,8 @@
  */
 
 package org.me.demo;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
 
@@ -17,8 +19,9 @@ import java.util.Hashtable;
     private SingletonNouns(){}
      
     private Hashtable<String,String> dictionarieNouns =new Hashtable<String,String>();
+    private Hashtable<String,String> dictionarieNounsDeadLines =new Hashtable<String,String>();
     
-    private Hashtable<String,Noun> dictionarieNounsObjetcs =new Hashtable<String,Noun>();
+    
     
     private static SingletonNouns Apuntador = null;
     
@@ -27,76 +30,81 @@ import java.util.Hashtable;
             Apuntador = new SingletonNouns();
         return Apuntador;
     }
-    
-    private String getCurrentlyDate(){
-        java.util.Date today = new Date();
-        return today.toString();
+    private String getDeadLine(){
+        Calendar calendario = Calendar.getInstance();
+        int hora =calendario.get(Calendar.HOUR_OF_DAY);
+        int minutos = calendario.get(Calendar.MINUTE);
+        int segundos = calendario.get(Calendar.SECOND);
+        
+        minutos++;
+        if (minutos>59){
+            minutos=0;
+            hora++;
+            if (hora==23)
+                hora=0;
+        }
+        String deadLine =  Integer.toString(hora) + ":"+Integer.toString(minutos)+":"+Integer.toString(segundos);
+        return deadLine;
+       
     }
     
-    private String getDeadLine(){
+    public boolean isCurrent(String Nouns){
+        String DeadLine = this.dictionarieNounsDeadLines.get(Nouns);
+        boolean bandera = true;
         
-        java.util.Date today = new Date();
-        String deadLine = today.toString();
-        String[] closters = deadLine.split(" ");
-        String[] HMS = closters[3].split(":");
+        Calendar calendario = Calendar.getInstance();
+        int hora =calendario.get(Calendar.HOUR_OF_DAY);
+        int minutos = calendario.get(Calendar.MINUTE);
+        int segundos = calendario.get(Calendar.SECOND);
+        
+        String[] HMS = DeadLine.split(":");
         
         int second = Integer.parseInt(  HMS[2] );
         int minute = Integer.parseInt(  HMS[1] );
         int hour = Integer.parseInt(  HMS[0] );
         
-        minute ++;
-        if (minute>=60){
-            minute=1;
-            hour++;
-            if(hour>23){
-                hour=0;
-                   
-            }
-        }
-        String x = Integer.toString(hour) +":"+Integer.toString(minute)+":"+Integer.toString(second);
-        String finalDeadLine = closters[0]+ " "+ closters[1]+ " "+ closters[2] + " "+x+" "+closters[4]+ " "+closters[5];
         
-        return finalDeadLine;
+        if( segundos > second ){
+            if ( minutos >= minute )
+                bandera=false;
+        }
+       
+        return bandera;
     }
     
-    public boolean setNouns(String user, String Nouns){
+    public boolean setNouns(String user, String Nouns, int time){
          
         if ( this.dictionarieNouns.containsKey(Nouns) ){
             return false;
         }else{
             this.dictionarieNouns.put(Nouns, user);
-            
-            Noun newNouns = new Noun(Nouns, getCurrentlyDate(), getDeadLine() );
-            this.dictionarieNounsObjetcs.put(Nouns, newNouns);
-            
+            this.dictionarieNounsDeadLines.put(Nouns, this.getDeadLine() );
+            //Noun myNoun = new Noun(time,Nouns);
             return true;
         }  
         
     }
-    private boolean stillTime(String Nouns){
-        Noun myNoun = this.dictionarieNounsObjetcs.get(Nouns);
-        return myNoun.stillTime();
-        
-        
-        
-    }
+    
     public boolean NounsUser(String Nouns, String User){
         if(this.dictionarieNouns.containsKey(Nouns)){
             
             String userHash = this.dictionarieNouns.get(Nouns);
-            if (userHash.equals(User))
-                if(stillTime(Nouns))
-                    return true;
-                else
-                    return false;
+            if ( (userHash.equals(User))  && (this.isCurrent(Nouns)== true)  )
+                return true;
             else
                 return false;
         }else
             return false;
     }
     
+    
+    
     public void removeNoun(String nouns){
         this.dictionarieNouns.remove(nouns);
+        this.dictionarieNounsDeadLines.remove(nouns);
     }
     
+    public int getSize(){
+        return this.dictionarieNouns.size();
+    }
 }

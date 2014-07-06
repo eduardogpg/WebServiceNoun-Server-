@@ -17,9 +17,20 @@ public class SecondWebService {
         
         if ( mySingletonNous.NounsUser(Nouns, user)  )
             return true;
-        else
+        else{
+            mySingletonNous.removeNoun(Nouns);
             return false;
+            
+        }
         
+        
+    }
+    
+    
+    public int obtenerSize(){
+        SingletonNouns mySingletonNous = SingletonNouns.getInstance();
+        
+        return mySingletonNous.getSize();
     }
 }
 
